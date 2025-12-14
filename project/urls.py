@@ -14,10 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
+import typing
+
 import django.contrib.admin as admin  # pylint: disable=consider-using-from-import
 import django.urls  # pylint: disable=consider-using-from-import
 
-urlpatterns = [
+urlpatterns: typing.List[typing.Any] = [
     django.urls.path("admin/", admin.site.urls),
     django.urls.path("brave/orders/", django.urls.include("brave_orders.urls")),
 ]

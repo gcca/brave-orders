@@ -10,28 +10,29 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 import pathlib
+import typing
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = pathlib.Path(__file__).resolve().parent.parent
+BASE_DIR: pathlib.Path = pathlib.Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = (
+SECRET_KEY: str = (
     "django-insecure-u#5_@u$j838$)9a%qtfrkd^uke@3cw82-mgv_0kai%2q9$0t@o"
 )
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG: bool = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS: typing.List[str] = ["*"]
 
 
 # Application definition
 
-INSTALLED_APPS = [
+INSTALLED_APPS: typing.List[str] = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -43,7 +44,7 @@ INSTALLED_APPS = [
     "brave_orders",
 ]
 
-MIDDLEWARE = [
+MIDDLEWARE: typing.List[str] = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -53,9 +54,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "project.urls"
+ROOT_URLCONF: str = "project.urls"
 
-TEMPLATES = [
+TEMPLATES: typing.List[typing.Dict[str, typing.Any]] = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [],
@@ -70,13 +71,13 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "project.wsgi.application"
+WSGI_APPLICATION: str = "project.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
-DATABASES = {
+DATABASES: typing.Dict[str, typing.Dict[str, typing.Any]] = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
@@ -87,7 +88,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/6.0/ref/settings/#auth-password-validators
 
-AUTH_PASSWORD_VALIDATORS = [
+AUTH_PASSWORD_VALIDATORS: typing.List[typing.Dict[str, str]] = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
@@ -106,24 +107,24 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE: str = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE: str = "UTC"
 
-USE_I18N = True
+USE_I18N: bool = True
 
-USE_TZ = True
+USE_TZ: bool = True
 
 
 # Django REST Framework configuration
-REST_FRAMEWORK = {
+REST_FRAMEWORK: typing.Dict[str, typing.Any] = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 50,
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
 # drf-spectacular configuration
-SPECTACULAR_SETTINGS = {
+SPECTACULAR_SETTINGS: typing.Dict[str, typing.Any] = {
     "TITLE": "Brave Orders API",
     "DESCRIPTION": "API documentation for the Brave Orders application.",
     "VERSION": "1.0.0",
@@ -133,4 +134,4 @@ SPECTACULAR_SETTINGS = {
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
-STATIC_URL = "static/"
+STATIC_URL: str = "static/"

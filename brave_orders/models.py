@@ -1,5 +1,7 @@
 """Django models for the brave_orders application."""
 
+import typing  # pylint: disable=unused-import
+
 import django.db.models as models  # pylint: disable=consider-using-from-import
 
 
@@ -397,14 +399,19 @@ class AdvertisementElement(models.Model):
     """Advertisement Element model representing individual advertisement elements.
 
     This model stores individual advertisement elements with display information
-    for rendering or presentation purposes.
+    and codes for rendering or presentation purposes.
 
     Attributes:
         display (CharField): The display text or identifier for the advertisement element.
             Maximum length is 255 characters.
+        code (CharField): The code or identifier for the advertisement element.
+            Maximum length is 100 characters.
 
     Example:
-        >>> element = AdvertisementElement.objects.create(display="Main Banner")
+        >>> element = AdvertisementElement.objects.create(
+        ...     display="Main Banner",
+        ...     code="BANNER-001"
+        ... )
         >>> str(element)
         'Main Banner'
     """
@@ -413,6 +420,11 @@ class AdvertisementElement(models.Model):
         max_length=255,
         verbose_name="Display",
         help_text="The display text or identifier for the advertisement element.",
+    )
+    code = models.CharField(
+        max_length=100,
+        verbose_name="Code",
+        help_text="The code or identifier for the advertisement element.",
     )
 
     def __str__(self) -> str:

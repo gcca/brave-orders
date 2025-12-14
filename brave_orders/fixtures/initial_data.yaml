@@ -1,0 +1,86 @@
+- model: brave_orders.advertisementkind
+  pk: 1
+  fields:
+    display_name: Publicidad
+
+- model: brave_orders.advertisementkind
+  pk: 2
+  fields:
+    display_name: Espacios temporales
+
+- model: brave_orders.advertisementkind
+  pk: 3
+  fields:
+    display_name: Sampling y volanteo
+
+- model: brave_orders.advertisementelement
+  pk: 1
+  fields:
+    display: Banner Principal Nivel 1
+    code: BP-N1-001
+
+- model: brave_orders.advertisementelement
+  pk: 2
+  fields:
+    display: Banner Secundario Nivel 2
+    code: BS-N2-002
+
+- model: brave_orders.advertisementelement
+  pk: 3
+  fields:
+    display: Espacio Temporal Pasillo Central
+    code: ET-PC-005
+
+- model: brave_orders.advertisementelement
+  pk: 4
+  fields:
+    display: Isla Promocional Food Court
+    code: IP-FC-007
+
+- model: brave_orders.advertisementelement
+  pk: 5
+  fields:
+    display: Pantalla LED Exterior
+    code: PL-EXT-004
+
+- model: brave_orders.advertisementelement
+  pk: 6
+  fields:
+    display: Pantalla LED Interior
+    code: PL-INT-003
+
+- model: brave_orders.advertisementelement
+  pk: 7
+  fields:
+    display: Sampling Entrada Principal
+    code: SM-EP-010
+
+- model: brave_orders.advertisementelement
+  pk: 8
+  fields:
+    display: Stand Promocional Entrada
+    code: SP-ENT-006
+
+- model: brave_orders.advertisementelement
+  pk: 9
+  fields:
+    display: Totem Digital Nivel 1
+    code: TD-N1-011
+
+- model: brave_orders.advertisementelement
+  pk: 10
+  fields:
+    display: Valla Estacionamiento
+    code: VE-EST-012
+
+- model: brave_orders.advertisementelement
+  pk: 11
+  fields:
+    display: Volanteo Zona Norte
+    code: VL-ZN-008
+
+- model: brave_orders.advertisementelement
+  pk: 12
+  fields:
+    display: Volanteo Zona Sur
+    code: VL-ZS-009

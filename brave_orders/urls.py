@@ -19,15 +19,19 @@ API documentation endpoints:
 - ReDoc: /api/schema/redoc/
 """
 
+import typing
+
 import django.urls  # pylint: disable=consider-using-from-import
 import drf_spectacular.views  # pylint: disable=consider-using-from-import
 import rest_framework.routers  # pylint: disable=consider-using-from-import
 
 import brave_orders.viewsets as viewsets  # pylint: disable=consider-using-from-import
 
-app_name = "brave-orders"  # pylint: disable=invalid-name
+app_name: str = "brave-orders"  # pylint: disable=invalid-name
 
-router = rest_framework.routers.DefaultRouter()
+router: rest_framework.routers.DefaultRouter = (
+    rest_framework.routers.DefaultRouter()
+)
 router.register(r"customers", viewsets.CustomerViewSet)
 router.register(r"sellers", viewsets.SellerViewSet)
 router.register(r"orders", viewsets.OrderViewSet)
@@ -73,6 +77,6 @@ api_urlpatterns = (
     "api",
 )
 
-urlpatterns = [
+urlpatterns: typing.List[typing.Any] = [
     django.urls.path("api/", django.urls.include(api_urlpatterns)),
 ]

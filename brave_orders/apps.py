@@ -1,5 +1,7 @@
 """Django app configuration for the brave_orders application."""
 
+import typing  # pylint: disable=unused-import
+
 import django.apps
 
 
@@ -15,4 +17,4 @@ class BraveOrdersConfig(django.apps.AppConfig):
             to identify this app in INSTALLED_APPS.
     """
 
-    name = "brave_orders"
+    name: str = "brave_orders"
