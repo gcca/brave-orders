@@ -104,7 +104,7 @@ class Seller(models.Model):
         email (EmailField): The primary email address for the seller.
         company_name (CharField): The name of the company the seller represents.
             Maximum length is 255 characters.
-        company_ruc (CharField): The RUC (Registro Único de Contribuyente) tax
+        ruc (CharField): The RUC (Registro Único de Contribuyente) tax
             identification number of the seller's company. Maximum length is 20 characters.
 
     Example:
@@ -113,7 +113,7 @@ class Seller(models.Model):
         ...     address="456 Business Ave",
         ...     email="jane@example.com",
         ...     company_name="Tech Solutions Inc",
-        ...     company_ruc="98765432109"
+        ...     ruc="98765432109"
         ... )
         >>> str(seller)
         'Jane Smith'
@@ -137,9 +137,9 @@ class Seller(models.Model):
         verbose_name="Company Name",
         help_text="The name of the company the seller represents.",
     )
-    company_ruc = models.CharField(
+    ruc = models.CharField(
         max_length=20,
-        verbose_name="Company RUC",
+        verbose_name="RUC",
         help_text=(
             "The RUC (Registro Único de Contribuyente) tax identification "
             "number of the seller's company."
@@ -153,3 +153,87 @@ class Seller(models.Model):
             str: The name of the seller.
         """
         return str(self.name)
+
+
+class Order(models.Model):
+    """Order model representing a purchase order in the system.
+
+    This model stores order information including customer relationship,
+    contact details, and payment terms for purchase orders.
+
+    Attributes:
+        customer (ForeignKey): Reference to the Customer who placed the order.
+            Uses CASCADE deletion - if customer is deleted, orders are deleted.
+        ruc (CharField): The RUC (Registro Único de Contribuyente) tax
+            identification number for the order. Maximum length is 20 characters.
+        email (EmailField): The email address associated with the order.
+        address (TextField): The delivery or billing address for the order.
+        phone (CharField): The phone number associated with the order.
+            Maximum length is 20 characters.
+        contact_name (CharField): The name of the contact person for this order.
+            Maximum length is 255 characters.
+        payment_days (PositiveIntegerField): The number of days for payment
+            terms for the order. Must be a positive integer value.
+
+    Example:
+        >>> customer = Customer.objects.create(name="Acme Corp", ruc="12345678901",
+        ...     email="contact@acme.com", phone="+1234567890", address="123 Main St",
+        ...     contact_name="John Doe")
+        >>> order = Order.objects.create(
+        ...     customer=customer,
+        ...     ruc="12345678901",
+        ...     email="orders@acme.com",
+        ...     address="123 Main St",
+        ...     phone="+1234567890",
+        ...     contact_name="John Doe",
+        ...     payment_days=30
+        ... )
+        >>> str(order)
+        'Order for Acme Corp'
+    """
+
+    customer = models.ForeignKey(
+        "Customer",
+        on_delete=models.CASCADE,
+        verbose_name="Customer",
+        help_text="The customer who placed this order.",
+        related_name="orders",
+    )
+    ruc = models.CharField(
+        max_length=20,
+        verbose_name="RUC",
+        help_text=(
+            "The RUC (Registro Único de Contribuyente) tax identification "
+            "number for the order."
+        ),
+    )
+    email = models.EmailField(
+        verbose_name="Email",
+        help_text="The email address associated with the order.",
+    )
+    address = models.TextField(
+        verbose_name="Address",
+        help_text="The delivery or billing address for the order.",
+    )
+    phone = models.CharField(
+        max_length=20,
+        verbose_name="Phone",
+        help_text="The phone number associated with the order.",
+    )
+    contact_name = models.CharField(
+        max_length=255,
+        verbose_name="Contact Name",
+        help_text="The name of the contact person for this order.",
+    )
+    payment_days = models.PositiveIntegerField(
+        verbose_name="Payment Days",
+        help_text="The number of days for payment terms for the order. Must be a positive integer.",
+    )
+
+    def __str__(self) -> str:
+        """Return a string representation of the Order instance.
+
+        Returns:
+            str: A string indicating the order and associated customer name.
+        """
+        return f"Order for {self.customer.name}"
