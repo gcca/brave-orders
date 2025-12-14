@@ -14,10 +14,10 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
-from django.urls import include, path
+import django.contrib.admin as admin  # pylint: disable=consider-using-from-import
+import django.urls  # pylint: disable=consider-using-from-import
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("brave/orders/", include("brave_orders.urls")),
+    django.urls.path("admin/", admin.site.urls),
+    django.urls.path("brave/orders/", django.urls.include("brave_orders.urls")),
 ]

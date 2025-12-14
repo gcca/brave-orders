@@ -1,8 +1,9 @@
 """Django REST Framework viewsets and serializers for the brave_orders application."""
 
-from rest_framework import serializers, viewsets
+import rest_framework.serializers as serializers  # pylint: disable=consider-using-from-import
+import rest_framework.viewsets as viewsets  # pylint: disable=consider-using-from-import
 
-from . import models
+import brave_orders.models as models  # pylint: disable=consider-using-from-import
 
 
 class CustomerSerializer(

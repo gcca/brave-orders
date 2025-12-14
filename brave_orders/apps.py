@@ -1,9 +1,9 @@
 """Django app configuration for the brave_orders application."""
 
-from django.apps import AppConfig
+import django.apps
 
 
-class BraveOrdersConfig(AppConfig):
+class BraveOrdersConfig(django.apps.AppConfig):
     """Application configuration for the brave_orders Django app.
 
     This configuration class defines metadata and initialization behavior
