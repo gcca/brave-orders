@@ -163,7 +163,9 @@ class Order(models.Model):
 
     Attributes:
         customer (ForeignKey): Reference to the Customer who placed the order.
-            Uses CASCADE deletion - if customer is deleted, orders are deleted.
+            Uses PROTECT deletion - prevents deletion if orders exist.
+        seller (ForeignKey): Reference to the Seller who is fulfilling the order.
+            Uses PROTECT deletion - prevents deletion if orders exist.
         ruc (CharField): The RUC (Registro Único de Contribuyente) tax
             identification number for the order. Maximum length is 20 characters.
         email (EmailField): The email address associated with the order.
@@ -179,8 +181,11 @@ class Order(models.Model):
         >>> customer = Customer.objects.create(name="Acme Corp", ruc="12345678901",
         ...     email="contact@acme.com", phone="+1234567890", address="123 Main St",
         ...     contact_name="John Doe")
+        >>> seller = Seller.objects.create(name="Jane Smith", address="456 Business Ave",
+        ...     email="jane@example.com", company_name="Tech Solutions Inc", ruc="98765432109")
         >>> order = Order.objects.create(
         ...     customer=customer,
+        ...     seller=seller,
         ...     ruc="12345678901",
         ...     email="orders@acme.com",
         ...     address="123 Main St",
@@ -194,9 +199,16 @@ class Order(models.Model):
 
     customer = models.ForeignKey(
         "Customer",
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         verbose_name="Customer",
         help_text="The customer who placed this order.",
+        related_name="orders",
+    )
+    seller = models.ForeignKey(
+        "Seller",
+        on_delete=models.PROTECT,
+        verbose_name="Seller",
+        help_text="The seller who is fulfilling this order.",
         related_name="orders",
     )
     ruc = models.CharField(
@@ -237,3 +249,176 @@ class Order(models.Model):
             str: A string indicating the order and associated customer name.
         """
         return f"Order for {self.customer.name}"
+
+
+class Advertisement(models.Model):
+    """Advertisement model representing advertising items in orders.
+
+    This model stores advertising information associated with orders, including
+    brand details, codes, date ranges, quantities, and pricing information.
+
+    Attributes:
+        order (ForeignKey): Reference to the Order that contains this advertisement.
+            Uses PROTECT deletion - prevents deletion if advertisements exist.
+        brand (CharField): The brand name associated with the advertisement.
+            Maximum length is 255 characters.
+        code (CharField): The code or identifier for the advertisement.
+            Maximum length is 100 characters.
+        start_date (DateField): The start date when the advertisement begins.
+        end_date (DateField): The end date when the advertisement expires.
+        quantity (PositiveIntegerField): The quantity of advertisement units.
+            Must be a positive integer value.
+        unit_price (DecimalField): The unit price for each advertisement item.
+            Maximum 10 digits with 2 decimal places.
+        advertisement_element (ForeignKey): Reference to the AdvertisementElement
+            associated with this advertisement. Uses PROTECT deletion - prevents
+            deletion if advertisements exist.
+        advertisement_kind (ForeignKey): Reference to the AdvertisementKind
+            associated with this advertisement. Uses PROTECT deletion - prevents
+            deletion if advertisements exist.
+
+    Example:
+        >>> customer = Customer.objects.create(name="Acme Corp", ruc="12345678901",
+        ...     email="contact@acme.com", phone="+1234567890", address="123 Main St",
+        ...     contact_name="John Doe")
+        >>> seller = Seller.objects.create(name="Jane Smith", address="456 Business Ave",
+        ...     email="jane@example.com", company_name="Tech Solutions Inc", ruc="98765432109")
+        >>> order = Order.objects.create(customer=customer, seller=seller, ruc="12345678901",
+        ...     email="orders@acme.com", address="123 Main St", phone="+1234567890",
+        ...     contact_name="John Doe", payment_days=30)
+        >>> element = AdvertisementElement.objects.create(display="Main Banner")
+        >>> kind = AdvertisementKind.objects.create(display_name="Banner")
+        >>> advertisement = Advertisement.objects.create(
+        ...     order=order,
+        ...     brand="TechBrand",
+        ...     code="AD-2024-001",
+        ...     start_date="2024-01-01",
+        ...     end_date="2024-12-31",
+        ...     quantity=100,
+        ...     unit_price=50.00,
+        ...     advertisement_element=element,
+        ...     advertisement_kind=kind
+        ... )
+        >>> str(advertisement)
+        'TechBrand - AD-2024-001'
+    """
+
+    order = models.ForeignKey(
+        "Order",
+        on_delete=models.PROTECT,
+        verbose_name="Order",
+        help_text="The order that contains this advertisement.",
+        related_name="advertisements",
+    )
+    brand = models.CharField(
+        max_length=255,
+        verbose_name="Brand",
+        help_text="The brand name associated with the advertisement.",
+    )
+    code = models.CharField(
+        max_length=100,
+        verbose_name="Code",
+        help_text="The code or identifier for the advertisement.",
+    )
+    start_date = models.DateField(
+        verbose_name="Start Date",
+        help_text="The start date when the advertisement begins.",
+    )
+    end_date = models.DateField(
+        verbose_name="End Date",
+        help_text="The end date when the advertisement expires.",
+    )
+    quantity = models.PositiveIntegerField(
+        verbose_name="Quantity",
+        help_text="The quantity of advertisement units. Must be a positive integer.",
+    )
+    unit_price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        verbose_name="Unit Price",
+        help_text="The unit price for each advertisement item.",
+    )
+    advertisement_element = models.ForeignKey(
+        "AdvertisementElement",
+        on_delete=models.PROTECT,
+        verbose_name="Advertisement Element",
+        help_text="The advertisement element associated with this advertisement.",
+        related_name="advertisements",
+    )
+    advertisement_kind = models.ForeignKey(
+        "AdvertisementKind",
+        on_delete=models.PROTECT,
+        verbose_name="Advertisement Kind",
+        help_text="The advertisement kind associated with this advertisement.",
+        related_name="advertisements",
+    )
+
+    def __str__(self) -> str:
+        """Return a string representation of the Advertisement instance.
+
+        Returns:
+            str: A string combining the brand name and code.
+        """
+        return f"{self.brand} - {self.code}"
+
+
+class AdvertisementKind(models.Model):
+    """Advertisement Kind model representing types or categories of advertisements.
+
+    This model stores different kinds or categories of advertisements that can
+    be used to classify and organize advertisement elements.
+
+    Attributes:
+        display_name (CharField): The display name for the advertisement kind.
+            Maximum length is 255 characters.
+
+    Example:
+        >>> kind = AdvertisementKind.objects.create(display_name="Banner")
+        >>> str(kind)
+        'Banner'
+    """
+
+    display_name = models.CharField(
+        max_length=255,
+        verbose_name="Display Name",
+        help_text="The display name for the advertisement kind.",
+    )
+
+    def __str__(self) -> str:
+        """Return a string representation of the AdvertisementKind instance.
+
+        Returns:
+            str: The display name of the advertisement kind.
+        """
+        return str(self.display_name)
+
+
+class AdvertisementElement(models.Model):
+    """Advertisement Element model representing individual advertisement elements.
+
+    This model stores individual advertisement elements with display information
+    for rendering or presentation purposes.
+
+    Attributes:
+        display (CharField): The display text or identifier for the advertisement element.
+            Maximum length is 255 characters.
+
+    Example:
+        >>> element = AdvertisementElement.objects.create(display="Main Banner")
+        >>> str(element)
+        'Main Banner'
+    """
+
+    display = models.CharField(
+        max_length=255,
+        verbose_name="Display",
+        help_text="The display text or identifier for the advertisement element.",
+    )
+
+    def __str__(self) -> str:
+        """Return a string representation of the AdvertisementElement instance.
+
+        Returns:
+            str: The display text of the advertisement element.
+        """
+        return str(self.display)
