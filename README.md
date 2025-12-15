@@ -36,6 +36,7 @@ A Django REST Framework API application for managing orders, customers, sellers,
 - Django 6.0+
 - Django REST Framework 3.16.1+
 - drf-spectacular 0.29.0+
+- httpie (for CLI testing)
 
 ## Installation
 
@@ -472,10 +473,10 @@ echo '{
 
 This creates an Order with nested Advertisements in a single request.
 
-### Using Python Requests
+### Using Python httpx
 
 ```python
-import requests
+import httpx
 
 BASE_URL = "http://localhost:8000/brave/orders/api/v1"
 
@@ -488,14 +489,66 @@ customer_data = {
     "address": "123 Main St",
     "contact_name": "John Doe"
 }
-response = requests.post(f"{BASE_URL}/customers/", json=customer_data)
-customer = response.json()
 
-# List all customers
-response = requests.get(f"{BASE_URL}/customers/")
-customers = response.json()
-print(f"Total customers: {customers['count']}")
-print(f"Results: {customers['results']}")
+with httpx.Client() as client:
+    # Create a customer
+    response = client.post(f"{BASE_URL}/customers/", json=customer_data)
+    customer = response.json()
+    print(f"Customer created: {customer['name']} (ID: {customer['id']})")
+
+    # List all customers (paginated)
+    response = client.get(f"{BASE_URL}/customers/")
+    customers = response.json()
+    print(f"Total customers: {customers['count']}")
+    print(f"Results per page: {len(customers['results'])}")
+
+    # Get specific customer
+    customer_id = customer['id']
+    response = client.get(f"{BASE_URL}/customers/{customer_id}/")
+    customer_detail = response.json()
+    print(f"Customer detail: {customer_detail}")
+
+    # Update customer (partial)
+    update_data = {"email": "newemail@acme.com"}
+    response = client.patch(f"{BASE_URL}/customers/{customer_id}/", json=update_data)
+    updated_customer = response.json()
+    print(f"Updated email: {updated_customer['email']}")
+
+    # Custom pagination
+    response = client.get(f"{BASE_URL}/customers/", params={"page_size": 10})
+    print(f"Custom page size: {len(response.json()['results'])} items")
+```
+
+#### Async Example with httpx
+
+```python
+import asyncio
+import httpx
+
+BASE_URL = "http://localhost:8000/brave/orders/api/v1"
+
+async def main():
+    async with httpx.AsyncClient() as client:
+        # Create customer
+        customer_data = {
+            "name": "Async Corp",
+            "ruc": "99988877766",
+            "email": "async@example.com",
+            "phone": "+9999999999",
+            "address": "Async Street",
+            "contact_name": "Async User"
+        }
+        response = await client.post(f"{BASE_URL}/customers/", json=customer_data)
+        customer = response.json()
+        print(f"Customer created: {customer['name']}")
+
+        # List customers
+        response = await client.get(f"{BASE_URL}/customers/")
+        customers = response.json()
+        print(f"Total customers: {customers['count']}")
+
+# Run async function
+asyncio.run(main())
 ```
 
 ## API Endpoints
