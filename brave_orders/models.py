@@ -1,7 +1,5 @@
 """Django models for the brave_orders application."""
 
-import typing  # pylint: disable=unused-import
-
 import django.db.models as models  # pylint: disable=consider-using-from-import
 
 

@@ -1,7 +1,5 @@
 """Django app configuration for the brave_orders application."""
 
-import typing  # pylint: disable=unused-import
-
 import django.apps
 
 
