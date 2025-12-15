@@ -6,6 +6,7 @@ import django.db.models.query as query  # pylint: disable=consider-using-from-im
 import rest_framework.viewsets as viewsets  # pylint: disable=consider-using-from-import
 
 import brave_orders.models as models  # pylint: disable=consider-using-from-import
+import brave_orders.pagination as pagination  # pylint: disable=consider-using-from-import
 import brave_orders.serializers as serializers  # pylint: disable=consider-using-from-import
 
 
@@ -64,6 +65,9 @@ class CustomerViewSet(
     serializer_class: typing.Type[serializers.CustomerSerializer] = (
         serializers.CustomerSerializer
     )
+    pagination_class: typing.Type[pagination.StandardResultsSetPagination] = (
+        pagination.StandardResultsSetPagination
+    )
 
 
 class SellerViewSet(
@@ -120,6 +124,9 @@ class SellerViewSet(
     )
     serializer_class: typing.Type[serializers.SellerSerializer] = (
         serializers.SellerSerializer
+    )
+    pagination_class: typing.Type[pagination.StandardResultsSetPagination] = (
+        pagination.StandardResultsSetPagination
     )
 
 
@@ -228,6 +235,9 @@ class OrderViewSet(viewsets.ModelViewSet):  # pylint: disable=too-many-ancestors
     serializer_class: typing.Type[serializers.OrderSerializer] = (
         serializers.OrderSerializer
     )
+    pagination_class: typing.Type[pagination.StandardResultsSetPagination] = (
+        pagination.StandardResultsSetPagination
+    )
 
 
 class AdvertisementViewSet(
@@ -287,6 +297,9 @@ class AdvertisementViewSet(
     serializer_class: typing.Type[serializers.AdvertisementSerializer] = (
         serializers.AdvertisementSerializer
     )
+    pagination_class: typing.Type[pagination.StandardResultsSetPagination] = (
+        pagination.StandardResultsSetPagination
+    )
 
 
 class AdvertisementKindViewSet(
@@ -341,6 +354,9 @@ class AdvertisementKindViewSet(
     )
     serializer_class: typing.Type[serializers.AdvertisementKindSerializer] = (
         serializers.AdvertisementKindSerializer
+    )
+    pagination_class: typing.Type[pagination.StandardResultsSetPagination] = (
+        pagination.StandardResultsSetPagination
     )
 
 
@@ -398,3 +414,6 @@ class AdvertisementElementViewSet(
     serializer_class: typing.Type[
         serializers.AdvertisementElementSerializer
     ] = serializers.AdvertisementElementSerializer
+    pagination_class: typing.Type[pagination.StandardResultsSetPagination] = (
+        pagination.StandardResultsSetPagination
+    )

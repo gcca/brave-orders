@@ -35,8 +35,8 @@ class CustomerViewSetTestCase(rest_test.APITestCase):
             models.Customer.objects.count(), 1  # pylint: disable=no-member
         )
         self.assertEqual(
-            models.Customer.objects.get().name,
-            "Test Corp",  # pylint: disable=no-member
+            models.Customer.objects.get().name,  # pylint: disable=no-member
+            "Test Corp",
         )
 
     def test_list_customers(self) -> None:
@@ -153,8 +153,8 @@ class AdvertisementKindViewSetTestCase(rest_test.APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
-            models.AdvertisementKind.objects.count(),
-            1,  # pylint: disable=no-member
+            models.AdvertisementKind.objects.count(),  # pylint: disable=no-member
+            1,
         )
 
     def test_list_advertisement_kinds(self) -> None:
@@ -515,6 +515,48 @@ class PaginationTestCase(rest_test.APITestCase):
         self.assertEqual(len(response.data["results"]), 50)
         self.assertIsNotNone(response.data["next"])
 
+    def test_custom_page_size(self) -> None:
+        """Test that custom page_size parameter works correctly."""
+        # Create 30 customers
+        for i in range(30):
+            models.Customer.objects.create(  # pylint: disable=no-member
+                name=f"Customer {i}",
+                ruc=f"2234567890{i:02d}",
+                email=f"customer{i}@test.com",
+                phone=f"+223456789{i:02d}",
+                address=f"Address {i}",
+                contact_name=f"Contact {i}",
+            )
+        # Test custom page_size=10
+        response = self.client.get(
+            "/brave/orders/api/v1/customers/?page_size=10"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 30)
+        self.assertEqual(len(response.data["results"]), 10)
+        self.assertIsNotNone(response.data["next"])
+
+    def test_max_page_size_limit(self) -> None:
+        """Test that max_page_size limit is enforced."""
+        # Create 150 customers
+        for i in range(150):
+            models.Customer.objects.create(  # pylint: disable=no-member
+                name=f"Customer {i}",
+                ruc=f"3234567890{i:03d}",
+                email=f"customer{i}@test.com",
+                phone=f"+323456789{i:03d}",
+                address=f"Address {i}",
+                contact_name=f"Contact {i}",
+            )
+        # Request page_size=200 (should be limited to max_page_size=100)
+        response = self.client.get(
+            "/brave/orders/api/v1/customers/?page_size=200"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 150)
+        # Should return max 100 items, not 200
+        self.assertEqual(len(response.data["results"]), 100)
+
 
 class FixtureDataTestCase(test.TestCase):
     """Test cases for fixture data loading."""
@@ -524,8 +566,8 @@ class FixtureDataTestCase(test.TestCase):
     def test_fixture_advertisement_kinds_loaded(self) -> None:
         """Test that AdvertisementKind fixtures are loaded."""
         self.assertEqual(
-            models.AdvertisementKind.objects.count(),
-            3,  # pylint: disable=no-member
+            models.AdvertisementKind.objects.count(),  # pylint: disable=no-member
+            3,
         )
         self.assertTrue(
             models.AdvertisementKind.objects.filter(  # pylint: disable=no-member
@@ -546,8 +588,8 @@ class FixtureDataTestCase(test.TestCase):
     def test_fixture_advertisement_elements_loaded(self) -> None:
         """Test that AdvertisementElement fixtures are loaded."""
         self.assertEqual(
-            models.AdvertisementElement.objects.count(),
-            12,  # pylint: disable=no-member
+            models.AdvertisementElement.objects.count(),  # pylint: disable=no-member
+            12,
         )
         # Test specific elements
         banner = models.AdvertisementElement.objects.get(  # pylint: disable=no-member
