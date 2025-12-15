@@ -19,11 +19,15 @@ A Django REST Framework API application for managing orders, customers, sellers,
 
 - **RESTful API** with Django REST Framework
 - **Automatic API Documentation** with Swagger UI and ReDoc (drf-spectacular)
+- **Nested Serializers** for creating Orders with Advertisements in a single request
 - **Pagination** (50 items per page)
 - **Data Protection** using PROTECT foreign key constraints
 - **Comprehensive Models**: Customers, Sellers, Orders, Advertisements, Advertisement Kinds, and Advertisement Elements
 - **Full CRUD Operations** for all resources
-- **Type-safe** with Python 3.13+ and type hints
+- **Type-safe** with Python 3.13+ type hints and django-stubs
+- **Fixtures** with initial data for Advertisement Kinds and Elements
+- **25 Comprehensive Tests** covering all API endpoints
+- **Code Quality** with pylint (10.00/10 score)
 
 ## Requirements
 
@@ -80,7 +84,16 @@ The project uses Django's default settings. Key configurations:
    python manage.py migrate
    ```
 
-3. **Create a superuser** (optional, for Django admin):
+3. **Load initial fixture data** (optional, recommended):
+   ```bash
+   python manage.py loaddata brave_orders/fixtures/initial_data.yaml
+   ```
+
+   This will load:
+   - 3 Advertisement Kinds (Publicidad, Espacios temporales, Sampling y volanteo)
+   - 12 Advertisement Elements with unique codes
+
+4. **Create a superuser** (optional, for Django admin):
    ```bash
    python manage.py createsuperuser
    ```
@@ -162,6 +175,7 @@ classDiagram
 
     class AdvertisementElement {
         +CharField display
+        +CharField code
         +__str__()
     }
 
@@ -299,6 +313,20 @@ sequenceDiagram
 
 ## Usage Examples
 
+### Fixtures
+
+The project includes initial fixture data for Advertisement Kinds and Advertisement Elements:
+
+#### Load Fixtures
+
+```bash
+python manage.py loaddata brave_orders/fixtures/initial_data.yaml
+```
+
+This will load:
+- **3 Advertisement Kinds**: Publicidad, Espacios temporales, Sampling y volanteo
+- **12 Advertisement Elements**: Various banner types, LED screens, sampling locations, etc. with unique codes
+
 ### Using httpie CLI
 
 #### 1. Create a Customer
@@ -359,8 +387,8 @@ echo '{
 #### 6. Create Advertisement Components
 
 ```bash
-# Create Advertisement Element
-echo '{"display": "Main Banner"}' | \
+# Create Advertisement Element (with code field)
+echo '{"display": "Main Banner", "code": "BANNER-001"}' | \
   http POST http://localhost:8000/brave/orders/api/v1/advertisement-elements/ \
   Content-Type:application/json
 
@@ -400,6 +428,36 @@ echo '{"payment_days": 45}' | \
 ```bash
 http DELETE http://localhost:8000/brave/orders/api/v1/customers/1/
 ```
+
+#### 10. Create Order with Nested Advertisements
+
+```bash
+echo '{
+  "customer": 1,
+  "seller": 1,
+  "ruc": "12345678901",
+  "email": "order@example.com",
+  "address": "123 Order St",
+  "phone": "+1234567890",
+  "contact_name": "Jane Doe",
+  "payment_days": 30,
+  "advertisements": [
+    {
+      "brand": "TechBrand",
+      "code": "AD-2024-001",
+      "start_date": "2024-01-01",
+      "end_date": "2024-12-31",
+      "quantity": 100,
+      "unit_price": "50.00",
+      "advertisement_element": 1,
+      "advertisement_kind": 1
+    }
+  ]
+}' | http POST http://localhost:8000/brave/orders/api/v1/orders/ \
+  Content-Type:application/json
+```
+
+This creates an Order with nested Advertisements in a single request.
 
 ### Using Python Requests
 
@@ -488,6 +546,8 @@ The project uses `pylint` for code quality checks. All Python files should pass 
 pylint brave_orders/*.py project/*.py manage.py
 ```
 
+The project also uses type hints with `typing` module and `django-stubs` for better type safety.
+
 ### Project Structure
 
 ```
@@ -498,9 +558,13 @@ brave-orders/
 │   ├── serializers.py     # DRF serializers
 │   ├── viewsets.py        # DRF viewsets
 │   ├── urls.py            # URL routing
+│   ├── tests.py           # API tests (25 tests)
 │   ├── admin.py           # Django admin configuration
 │   ├── apps.py            # App configuration
+│   ├── fixtures/          # Initial data fixtures
+│   │   └── initial_data.yaml
 │   └── migrations/        # Database migrations
+│       └── 0001_initial.py
 ├── project/
 │   ├── settings.py        # Django settings
 │   ├── urls.py           # Root URL configuration
@@ -513,8 +577,31 @@ brave-orders/
 
 ### Running Tests
 
+The project includes 25 comprehensive tests covering all API endpoints:
+
 ```bash
-python manage.py test
+# Run all tests
+python manage.py test brave_orders
+
+# Run with verbose output
+python manage.py test brave_orders -v 2
+
+# Run specific test class
+python manage.py test brave_orders.tests.OrderViewSetTestCase
+
+# Run specific test method
+python manage.py test brave_orders.tests.OrderViewSetTestCase.test_create_order_with_nested_advertisements
+```
+
+**Test Coverage:**
+- ✅ Customer CRUD operations (6 tests)
+- ✅ Seller CRUD operations (2 tests)
+- ✅ Order CRUD operations with nested advertisements (6 tests)
+- ✅ Advertisement CRUD operations (2 tests)
+- ✅ AdvertisementKind CRUD operations (2 tests)
+- ✅ AdvertisementElement CRUD operations (3 tests)
+- ✅ Pagination (1 test)
+- ✅ Fixture data loading (3 tests)
 ```
 
 ### Creating Migrations
