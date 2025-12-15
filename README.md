@@ -20,13 +20,13 @@ A Django REST Framework API application for managing orders, customers, sellers,
 - **RESTful API** with Django REST Framework
 - **Automatic API Documentation** with Swagger UI and ReDoc (drf-spectacular)
 - **Nested Serializers** for creating Orders with Advertisements in a single request
-- **Pagination** (50 items per page)
+- **Pagination** controlled by code (50 items per page by default, customizable up to 100)
 - **Data Protection** using PROTECT foreign key constraints
 - **Comprehensive Models**: Customers, Sellers, Orders, Advertisements, Advertisement Kinds, and Advertisement Elements
 - **Full CRUD Operations** for all resources
 - **Type-safe** with Python 3.13+ type hints and django-stubs
 - **Fixtures** with initial data for Advertisement Kinds and Elements
-- **25 Comprehensive Tests** covering all API endpoints
+- **27 Comprehensive Tests** covering all API endpoints including pagination
 - **Code Quality** with pylint (10.00/10 score)
 
 ## Requirements
@@ -69,7 +69,10 @@ The project uses Django's default settings. Key configurations:
 
 - **Database**: SQLite (default, can be changed in `project/settings.py`)
 - **API Base URL**: `/brave/orders/api/v1/`
-- **Pagination**: 50 items per page
+- **Pagination**: Controlled by code via `StandardResultsSetPagination` class
+  - Default: 50 items per page
+  - Customizable: Use `?page_size=X` query parameter (max 100)
+  - Page navigation: Use `?page=X` query parameter
 - **API Documentation**: Available at `/brave/orders/api/v1/schema/swagger/` and `/brave/orders/api/v1/schema/redoc/`
 
 ## Database Setup
@@ -346,7 +349,17 @@ echo '{
 #### 2. List All Customers (Paginated)
 
 ```bash
+# Default pagination (50 per page)
 http GET http://localhost:8000/brave/orders/api/v1/customers/
+
+# Custom page size (20 per page)
+http GET 'http://localhost:8000/brave/orders/api/v1/customers/?page_size=20'
+
+# Navigate to page 2
+http GET 'http://localhost:8000/brave/orders/api/v1/customers/?page=2'
+
+# Combine page and page_size
+http GET 'http://localhost:8000/brave/orders/api/v1/customers/?page=2&page_size=30'
 ```
 
 #### 3. Get a Specific Customer
@@ -557,6 +570,7 @@ brave-orders/
 │   ├── models.py          # Django models
 │   ├── serializers.py     # DRF serializers
 │   ├── viewsets.py        # DRF viewsets
+│   ├── pagination.py      # Pagination classes
 │   ├── urls.py            # URL routing
 │   ├── tests.py           # API tests (25 tests)
 │   ├── admin.py           # Django admin configuration
@@ -577,7 +591,7 @@ brave-orders/
 
 ### Running Tests
 
-The project includes 25 comprehensive tests covering all API endpoints:
+The project includes 27 comprehensive tests covering all API endpoints:
 
 ```bash
 # Run all tests
@@ -600,7 +614,7 @@ python manage.py test brave_orders.tests.OrderViewSetTestCase.test_create_order_
 - ✅ Advertisement CRUD operations (2 tests)
 - ✅ AdvertisementKind CRUD operations (2 tests)
 - ✅ AdvertisementElement CRUD operations (3 tests)
-- ✅ Pagination (1 test)
+- ✅ Pagination (3 tests: default, custom page_size, max limit)
 - ✅ Fixture data loading (3 tests)
 ```
 
