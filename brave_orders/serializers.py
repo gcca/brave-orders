@@ -2,14 +2,12 @@
 
 import typing
 
-import rest_framework.serializers as serializers  # pylint: disable=consider-using-from-import
+import rest_framework.serializers as serializers
 
-import brave_orders.models as models  # pylint: disable=consider-using-from-import
+import brave_orders.models as models
 
 
-class CustomerSerializer(
-    serializers.ModelSerializer
-):  # pylint: disable=too-few-public-methods
+class CustomerSerializer(serializers.ModelSerializer):
     """Serializer for the Customer model.
 
     This serializer handles serialization and deserialization of Customer instances
@@ -35,16 +33,14 @@ class CustomerSerializer(
         >>> customer = serializer.save()
     """
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:
         """Meta configuration for CustomerSerializer."""
 
         model = models.Customer
         fields = "__all__"
 
 
-class SellerSerializer(
-    serializers.ModelSerializer
-):  # pylint: disable=too-few-public-methods
+class SellerSerializer(serializers.ModelSerializer):
     """Serializer for the Seller model.
 
     This serializer handles serialization and deserialization of Seller instances
@@ -69,16 +65,14 @@ class SellerSerializer(
         >>> seller = serializer.save()
     """
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:
         """Meta configuration for SellerSerializer."""
 
         model = models.Seller
         fields = "__all__"
 
 
-class AdvertisementKindSerializer(
-    serializers.ModelSerializer
-):  # pylint: disable=too-few-public-methods
+class AdvertisementKindSerializer(serializers.ModelSerializer):
     """Serializer for the AdvertisementKind model.
 
     This serializer handles serialization and deserialization of AdvertisementKind
@@ -99,16 +93,14 @@ class AdvertisementKindSerializer(
         >>> kind = serializer.save()
     """
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:
         """Meta configuration for AdvertisementKindSerializer."""
 
         model = models.AdvertisementKind
         fields = "__all__"
 
 
-class AdvertisementElementSerializer(
-    serializers.ModelSerializer
-):  # pylint: disable=too-few-public-methods
+class AdvertisementElementSerializer(serializers.ModelSerializer):
     """Serializer for the AdvertisementElement model.
 
     This serializer handles serialization and deserialization of AdvertisementElement
@@ -130,16 +122,14 @@ class AdvertisementElementSerializer(
         >>> element = serializer.save()
     """
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:
         """Meta configuration for AdvertisementElementSerializer."""
 
         model = models.AdvertisementElement
         fields = "__all__"
 
 
-class AdvertisementSerializer(
-    serializers.ModelSerializer
-):  # pylint: disable=too-few-public-methods
+class AdvertisementSerializer(serializers.ModelSerializer):
     """Serializer for the Advertisement model.
 
     This serializer handles serialization and deserialization of Advertisement
@@ -169,20 +159,18 @@ class AdvertisementSerializer(
     """
 
     order = serializers.PrimaryKeyRelatedField(
-        queryset=models.Order.objects.all(),  # pylint: disable=no-member
+        queryset=models.Order.objects.all(),
         required=False,
     )
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:
         """Meta configuration for AdvertisementSerializer."""
 
         model = models.Advertisement
         fields = "__all__"
 
 
-class OrderSerializer(
-    serializers.ModelSerializer
-):  # pylint: disable=too-few-public-methods
+class OrderSerializer(serializers.ModelSerializer):
     """Serializer for the Order model with nested Advertisements.
 
     This serializer handles serialization and deserialization of Order instances
@@ -226,7 +214,7 @@ class OrderSerializer(
 
     advertisements = serializers.SerializerMethodField()
 
-    class Meta:  # pylint: disable=too-few-public-methods
+    class Meta:
         """Meta configuration for OrderSerializer."""
 
         model = models.Order
@@ -243,9 +231,7 @@ class OrderSerializer(
         Returns:
             list: List of serialized Advertisement instances.
         """
-        advertisements: typing.Any = (
-            obj.advertisements.all()  # pylint: disable=no-member
-        )
+        advertisements: typing.Any = obj.advertisements.all()
         return AdvertisementSerializer(advertisements, many=True).data
 
     def create(
@@ -265,9 +251,7 @@ class OrderSerializer(
         advertisements_data: typing.List[typing.Dict[str, typing.Any]] = (
             self.initial_data.get("advertisements", [])
         )
-        order = models.Order.objects.create(  # pylint: disable=no-member
-            **validated_data
-        )
+        order = models.Order.objects.create(**validated_data)
 
         errors: typing.List[typing.Dict[str, typing.Any]] = []
         for idx, advertisement_data in enumerate(advertisements_data):
@@ -315,7 +299,7 @@ class OrderSerializer(
         # Handle advertisements if provided
         if advertisements_data is not None:
             # Remove existing advertisements if replacing
-            instance.advertisements.all().delete()  # pylint: disable=no-member
+            instance.advertisements.all().delete()
 
             # Create new advertisements
             errors: typing.List[typing.Dict[str, typing.Any]] = []

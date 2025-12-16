@@ -2,11 +2,11 @@
 
 import typing
 
-import django.test as test  # pylint: disable=consider-using-from-import
-import rest_framework.status as status  # pylint: disable=consider-using-from-import
-import rest_framework.test as rest_test  # pylint: disable=consider-using-from-import
+import django.test as test
+import rest_framework.status as status
+import rest_framework.test as rest_test
 
-import brave_orders.models as models  # pylint: disable=consider-using-from-import
+import brave_orders.models as models
 
 
 class CustomerViewSetTestCase(rest_test.APITestCase):
@@ -31,19 +31,15 @@ class CustomerViewSetTestCase(rest_test.APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(models.Customer.objects.count(), 1)
         self.assertEqual(
-            models.Customer.objects.count(), 1  # pylint: disable=no-member
-        )
-        self.assertEqual(
-            models.Customer.objects.get().name,  # pylint: disable=no-member
+            models.Customer.objects.get().name,
             "Test Corp",
         )
 
     def test_list_customers(self) -> None:
         """Test listing customers via GET request."""
-        models.Customer.objects.create(  # pylint: disable=no-member
-            **self.customer_data
-        )
+        models.Customer.objects.create(**self.customer_data)
         response = self.client.get("/brave/orders/api/v1/customers/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
@@ -51,9 +47,7 @@ class CustomerViewSetTestCase(rest_test.APITestCase):
 
     def test_retrieve_customer(self) -> None:
         """Test retrieving a specific customer via GET request."""
-        customer = models.Customer.objects.create(  # pylint: disable=no-member
-            **self.customer_data
-        )
+        customer = models.Customer.objects.create(**self.customer_data)
         response = self.client.get(
             f"/brave/orders/api/v1/customers/{customer.id}/"
         )
@@ -63,9 +57,7 @@ class CustomerViewSetTestCase(rest_test.APITestCase):
 
     def test_update_customer(self) -> None:
         """Test updating a customer via PUT request."""
-        customer = models.Customer.objects.create(  # pylint: disable=no-member
-            **self.customer_data
-        )
+        customer = models.Customer.objects.create(**self.customer_data)
         updated_data = self.customer_data.copy()
         updated_data["name"] = "Updated Corp"
         response = self.client.put(
@@ -78,9 +70,7 @@ class CustomerViewSetTestCase(rest_test.APITestCase):
 
     def test_partial_update_customer(self) -> None:
         """Test partially updating a customer via PATCH request."""
-        customer = models.Customer.objects.create(  # pylint: disable=no-member
-            **self.customer_data
-        )
+        customer = models.Customer.objects.create(**self.customer_data)
         response = self.client.patch(
             f"/brave/orders/api/v1/customers/{customer.id}/",
             {"email": "newemail@testcorp.com"},
@@ -92,16 +82,12 @@ class CustomerViewSetTestCase(rest_test.APITestCase):
 
     def test_delete_customer(self) -> None:
         """Test deleting a customer via DELETE request."""
-        customer = models.Customer.objects.create(  # pylint: disable=no-member
-            **self.customer_data
-        )
+        customer = models.Customer.objects.create(**self.customer_data)
         response = self.client.delete(
             f"/brave/orders/api/v1/customers/{customer.id}/"
         )
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(
-            models.Customer.objects.count(), 0  # pylint: disable=no-member
-        )
+        self.assertEqual(models.Customer.objects.count(), 0)
 
 
 class SellerViewSetTestCase(rest_test.APITestCase):
@@ -123,15 +109,11 @@ class SellerViewSetTestCase(rest_test.APITestCase):
             "/brave/orders/api/v1/sellers/", self.seller_data, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(
-            models.Seller.objects.count(), 1  # pylint: disable=no-member
-        )
+        self.assertEqual(models.Seller.objects.count(), 1)
 
     def test_list_sellers(self) -> None:
         """Test listing sellers via GET request."""
-        models.Seller.objects.create(  # pylint: disable=no-member
-            **self.seller_data
-        )
+        models.Seller.objects.create(**self.seller_data)
         response = self.client.get("/brave/orders/api/v1/sellers/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
@@ -153,15 +135,13 @@ class AdvertisementKindViewSetTestCase(rest_test.APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
-            models.AdvertisementKind.objects.count(),  # pylint: disable=no-member
+            models.AdvertisementKind.objects.count(),
             1,
         )
 
     def test_list_advertisement_kinds(self) -> None:
         """Test listing advertisement kinds via GET request."""
-        models.AdvertisementKind.objects.create(  # pylint: disable=no-member
-            **self.kind_data
-        )
+        models.AdvertisementKind.objects.create(**self.kind_data)
         response = self.client.get("/brave/orders/api/v1/advertisement-kinds/")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["count"], 1)
@@ -186,19 +166,17 @@ class AdvertisementElementViewSetTestCase(rest_test.APITestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(
-            models.AdvertisementElement.objects.count(),  # pylint: disable=no-member
+            models.AdvertisementElement.objects.count(),
             1,
         )
         self.assertEqual(
-            models.AdvertisementElement.objects.get().code,  # pylint: disable=no-member
+            models.AdvertisementElement.objects.get().code,
             "TEST-001",
         )
 
     def test_list_advertisement_elements(self) -> None:
         """Test listing advertisement elements via GET request."""
-        models.AdvertisementElement.objects.create(  # pylint: disable=no-member
-            **self.element_data
-        )
+        models.AdvertisementElement.objects.create(**self.element_data)
         response = self.client.get(
             "/brave/orders/api/v1/advertisement-elements/"
         )
@@ -208,7 +186,7 @@ class AdvertisementElementViewSetTestCase(rest_test.APITestCase):
 
     def test_retrieve_advertisement_element(self) -> None:
         """Test retrieving a specific advertisement element via GET request."""
-        element = models.AdvertisementElement.objects.create(  # pylint: disable=no-member
+        element = models.AdvertisementElement.objects.create(
             **self.element_data
         )
         response = self.client.get(
@@ -224,24 +202,22 @@ class AdvertisementViewSetTestCase(rest_test.APITestCase):
 
     def setUp(self) -> None:
         """Set up test data."""
-        self.customer = (
-            models.Customer.objects.create(  # pylint: disable=no-member
-                name="Test Corp",
-                ruc="12345678901",
-                email="test@testcorp.com",
-                phone="+1234567890",
-                address="123 Test St",
-                contact_name="John Test",
-            )
+        self.customer = models.Customer.objects.create(
+            name="Test Corp",
+            ruc="12345678901",
+            email="test@testcorp.com",
+            phone="+1234567890",
+            address="123 Test St",
+            contact_name="John Test",
         )
-        self.seller = models.Seller.objects.create(  # pylint: disable=no-member
+        self.seller = models.Seller.objects.create(
             name="Jane Seller",
             address="456 Seller Ave",
             email="jane@seller.com",
             company_name="Seller Solutions Inc",
             ruc="98765432109",
         )
-        self.order = models.Order.objects.create(  # pylint: disable=no-member
+        self.order = models.Order.objects.create(
             customer=self.customer,
             seller=self.seller,
             ruc="12345678901",
@@ -251,10 +227,10 @@ class AdvertisementViewSetTestCase(rest_test.APITestCase):
             contact_name="Jane Order",
             payment_days=30,
         )
-        self.kind = models.AdvertisementKind.objects.create(  # pylint: disable=no-member
+        self.kind = models.AdvertisementKind.objects.create(
             display_name="Test Kind"
         )
-        self.element = models.AdvertisementElement.objects.create(  # pylint: disable=no-member
+        self.element = models.AdvertisementElement.objects.create(
             display="Test Banner", code="TEST-001"
         )
         self.advertisement_data: typing.Dict[str, typing.Any] = {
@@ -277,13 +253,11 @@ class AdvertisementViewSetTestCase(rest_test.APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(
-            models.Advertisement.objects.count(), 1  # pylint: disable=no-member
-        )
+        self.assertEqual(models.Advertisement.objects.count(), 1)
 
     def test_list_advertisements(self) -> None:
         """Test listing advertisements via GET request."""
-        models.Advertisement.objects.create(  # pylint: disable=no-member
+        models.Advertisement.objects.create(
             order=self.order,
             brand="TestBrand",
             code="AD-TEST-001",
@@ -304,27 +278,25 @@ class OrderViewSetTestCase(rest_test.APITestCase):
 
     def setUp(self) -> None:
         """Set up test data."""
-        self.customer = (
-            models.Customer.objects.create(  # pylint: disable=no-member
-                name="Test Corp",
-                ruc="12345678901",
-                email="test@testcorp.com",
-                phone="+1234567890",
-                address="123 Test St",
-                contact_name="John Test",
-            )
+        self.customer = models.Customer.objects.create(
+            name="Test Corp",
+            ruc="12345678901",
+            email="test@testcorp.com",
+            phone="+1234567890",
+            address="123 Test St",
+            contact_name="John Test",
         )
-        self.seller = models.Seller.objects.create(  # pylint: disable=no-member
+        self.seller = models.Seller.objects.create(
             name="Jane Seller",
             address="456 Seller Ave",
             email="jane@seller.com",
             company_name="Seller Solutions Inc",
             ruc="98765432109",
         )
-        self.kind = models.AdvertisementKind.objects.create(  # pylint: disable=no-member
+        self.kind = models.AdvertisementKind.objects.create(
             display_name="Test Kind"
         )
-        self.element = models.AdvertisementElement.objects.create(  # pylint: disable=no-member
+        self.element = models.AdvertisementElement.objects.create(
             display="Test Banner", code="TEST-001"
         )
         self.order_data: typing.Dict[str, typing.Any] = {
@@ -344,9 +316,7 @@ class OrderViewSetTestCase(rest_test.APITestCase):
             "/brave/orders/api/v1/orders/", self.order_data, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(
-            models.Order.objects.count(), 1  # pylint: disable=no-member
-        )
+        self.assertEqual(models.Order.objects.count(), 1)
         self.assertEqual(response.data["advertisements"], [])
 
     def test_create_order_with_nested_advertisements(self) -> None:
@@ -368,12 +338,8 @@ class OrderViewSetTestCase(rest_test.APITestCase):
             "/brave/orders/api/v1/orders/", order_data_with_ads, format="json"
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(
-            models.Order.objects.count(), 1  # pylint: disable=no-member
-        )
-        self.assertEqual(
-            models.Advertisement.objects.count(), 1  # pylint: disable=no-member
-        )
+        self.assertEqual(models.Order.objects.count(), 1)
+        self.assertEqual(models.Advertisement.objects.count(), 1)
         self.assertEqual(len(response.data["advertisements"]), 1)
         self.assertEqual(
             response.data["advertisements"][0]["brand"], "TestBrand"
@@ -381,7 +347,7 @@ class OrderViewSetTestCase(rest_test.APITestCase):
 
     def test_list_orders(self) -> None:
         """Test listing orders via GET request."""
-        models.Order.objects.create(  # pylint: disable=no-member
+        models.Order.objects.create(
             customer=self.customer,
             seller=self.seller,
             ruc="12345678901",
@@ -397,7 +363,7 @@ class OrderViewSetTestCase(rest_test.APITestCase):
 
     def test_retrieve_order(self) -> None:
         """Test retrieving a specific order via GET request."""
-        order = models.Order.objects.create(  # pylint: disable=no-member
+        order = models.Order.objects.create(
             customer=self.customer,
             seller=self.seller,
             ruc="12345678901",
@@ -414,7 +380,7 @@ class OrderViewSetTestCase(rest_test.APITestCase):
 
     def test_update_order_with_nested_advertisements(self) -> None:
         """Test updating an order with nested advertisements via PUT request."""
-        order = models.Order.objects.create(  # pylint: disable=no-member
+        order = models.Order.objects.create(
             customer=self.customer,
             seller=self.seller,
             ruc="12345678901",
@@ -425,7 +391,7 @@ class OrderViewSetTestCase(rest_test.APITestCase):
             payment_days=30,
         )
         # Create initial advertisement
-        models.Advertisement.objects.create(  # pylint: disable=no-member
+        models.Advertisement.objects.create(
             order=order,
             brand="OldBrand",
             code="AD-OLD-001",
@@ -464,17 +430,15 @@ class OrderViewSetTestCase(rest_test.APITestCase):
             response.data["advertisements"][0]["brand"], "NewBrand"
         )
         # Verify old advertisement was deleted
+        self.assertEqual(models.Advertisement.objects.count(), 1)
         self.assertEqual(
-            models.Advertisement.objects.count(), 1  # pylint: disable=no-member
-        )
-        self.assertEqual(
-            models.Advertisement.objects.get().brand,  # pylint: disable=no-member
+            models.Advertisement.objects.get().brand,
             "NewBrand",
         )
 
     def test_partial_update_order(self) -> None:
         """Test partially updating an order via PATCH request."""
-        order = models.Order.objects.create(  # pylint: disable=no-member
+        order = models.Order.objects.create(
             customer=self.customer,
             seller=self.seller,
             ruc="12345678901",
@@ -501,7 +465,7 @@ class PaginationTestCase(rest_test.APITestCase):
         """Test that customers are paginated correctly."""
         # Create 51 customers to test pagination (PAGE_SIZE=50)
         for i in range(51):
-            models.Customer.objects.create(  # pylint: disable=no-member
+            models.Customer.objects.create(
                 name=f"Customer {i}",
                 ruc=f"1234567890{i:02d}",
                 email=f"customer{i}@test.com",
@@ -519,7 +483,7 @@ class PaginationTestCase(rest_test.APITestCase):
         """Test that custom page_size parameter works correctly."""
         # Create 30 customers
         for i in range(30):
-            models.Customer.objects.create(  # pylint: disable=no-member
+            models.Customer.objects.create(
                 name=f"Customer {i}",
                 ruc=f"2234567890{i:02d}",
                 email=f"customer{i}@test.com",
@@ -540,7 +504,7 @@ class PaginationTestCase(rest_test.APITestCase):
         """Test that max_page_size limit is enforced."""
         # Create 150 customers
         for i in range(150):
-            models.Customer.objects.create(  # pylint: disable=no-member
+            models.Customer.objects.create(
                 name=f"Customer {i}",
                 ruc=f"3234567890{i:03d}",
                 email=f"customer{i}@test.com",
@@ -566,21 +530,21 @@ class FixtureDataTestCase(test.TestCase):
     def test_fixture_advertisement_kinds_loaded(self) -> None:
         """Test that AdvertisementKind fixtures are loaded."""
         self.assertEqual(
-            models.AdvertisementKind.objects.count(),  # pylint: disable=no-member
+            models.AdvertisementKind.objects.count(),
             3,
         )
         self.assertTrue(
-            models.AdvertisementKind.objects.filter(  # pylint: disable=no-member
+            models.AdvertisementKind.objects.filter(
                 display_name="Publicidad"
             ).exists()
         )
         self.assertTrue(
-            models.AdvertisementKind.objects.filter(  # pylint: disable=no-member
+            models.AdvertisementKind.objects.filter(
                 display_name="Espacios temporales"
             ).exists()
         )
         self.assertTrue(
-            models.AdvertisementKind.objects.filter(  # pylint: disable=no-member
+            models.AdvertisementKind.objects.filter(
                 display_name="Sampling y volanteo"
             ).exists()
         )
@@ -588,17 +552,13 @@ class FixtureDataTestCase(test.TestCase):
     def test_fixture_advertisement_elements_loaded(self) -> None:
         """Test that AdvertisementElement fixtures are loaded."""
         self.assertEqual(
-            models.AdvertisementElement.objects.count(),  # pylint: disable=no-member
+            models.AdvertisementElement.objects.count(),
             12,
         )
         # Test specific elements
-        banner = models.AdvertisementElement.objects.get(  # pylint: disable=no-member
-            code="BP-N1-001"
-        )
+        banner = models.AdvertisementElement.objects.get(code="BP-N1-001")
         self.assertEqual(banner.display, "Banner Principal Nivel 1")
-        volanteo = models.AdvertisementElement.objects.get(  # pylint: disable=no-member
-            code="VL-ZN-008"
-        )
+        volanteo = models.AdvertisementElement.objects.get(code="VL-ZN-008")
         self.assertEqual(volanteo.display, "Volanteo Zona Norte")
 
     def test_fixture_advertisement_element_codes(self) -> None:
@@ -619,7 +579,5 @@ class FixtureDataTestCase(test.TestCase):
         ]
         for code in codes:
             self.assertTrue(
-                models.AdvertisementElement.objects.filter(  # pylint: disable=no-member
-                    code=code
-                ).exists()
+                models.AdvertisementElement.objects.filter(code=code).exists()
             )

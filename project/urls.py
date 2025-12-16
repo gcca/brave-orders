@@ -16,8 +16,8 @@ Including another URLconf
 
 import typing
 
-import django.contrib.admin as admin  # pylint: disable=consider-using-from-import
-import django.urls  # pylint: disable=consider-using-from-import
+import django.contrib.admin as admin
+import django.urls
 
 urlpatterns: typing.List[typing.Any] = [
     django.urls.path("admin/", admin.site.urls),

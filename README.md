@@ -606,11 +606,16 @@ To delete protected resources, you must first delete all dependent resources.
 
 ### Code Quality
 
-The project uses `pylint` for code quality checks. All Python files should pass with a score of 10.00/10:
+The project uses `pylint` for code quality checks with a custom `.pylintrc` configuration. All Python files should pass with a score of 10.00/10:
 
 ```bash
 pylint brave_orders/*.py project/*.py manage.py
 ```
+
+The `.pylintrc` file is configured to:
+- Disable common Django/DRF false positives (`no-member`, `too-many-ancestors`, `too-few-public-methods`)
+- Use `import module as alias` style instead of `from module import item`
+- Set reasonable limits for complexity metrics
 
 The project also uses type hints with `typing` module and `django-stubs` for better type safety.
 
@@ -625,7 +630,7 @@ brave-orders/
 │   ├── viewsets.py        # DRF viewsets
 │   ├── pagination.py      # Pagination classes
 │   ├── urls.py            # URL routing
-│   ├── tests.py           # API tests (25 tests)
+│   ├── tests.py           # API tests (27 tests)
 │   ├── admin.py           # Django admin configuration
 │   ├── apps.py            # App configuration
 │   ├── fixtures/          # Initial data fixtures
@@ -637,6 +642,7 @@ brave-orders/
 │   ├── urls.py           # Root URL configuration
 │   ├── wsgi.py           # WSGI configuration
 │   └── asgi.py           # ASGI configuration
+├── .pylintrc             # Pylint configuration
 ├── manage.py             # Django management script
 ├── pyproject.toml        # Project dependencies
 └── README.md             # This file

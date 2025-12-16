@@ -8,7 +8,7 @@ def main() -> None:
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "project.settings")
     try:
-        import django.core.management  # pylint: disable=import-outside-toplevel
+        import django.core.management
     except ImportError as exc:
         raise ImportError(
             "Couldn't import Django. Are you sure it's installed and "

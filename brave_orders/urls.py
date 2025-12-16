@@ -21,13 +21,13 @@ API documentation endpoints:
 
 import typing
 
-import django.urls  # pylint: disable=consider-using-from-import
-import drf_spectacular.views  # pylint: disable=consider-using-from-import
-import rest_framework.routers  # pylint: disable=consider-using-from-import
+import django.urls
+import drf_spectacular.views
+import rest_framework.routers
 
-import brave_orders.viewsets as viewsets  # pylint: disable=consider-using-from-import
+import brave_orders.viewsets as viewsets
 
-app_name: str = "brave-orders"  # pylint: disable=invalid-name
+app_name: str = "brave-orders"
 
 router: rest_framework.routers.DefaultRouter = (
     rest_framework.routers.DefaultRouter()

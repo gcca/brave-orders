@@ -1,6 +1,6 @@
 """Django models for the brave_orders application."""
 
-import django.db.models as models  # pylint: disable=consider-using-from-import
+import django.db.models as models
 
 
 class Customer(models.Model):

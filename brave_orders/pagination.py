@@ -2,12 +2,10 @@
 
 import typing
 
-import rest_framework.pagination as pagination  # pylint: disable=consider-using-from-import
+import rest_framework.pagination as pagination
 
 
-class StandardResultsSetPagination(
-    pagination.PageNumberPagination
-):  # pylint: disable=too-few-public-methods
+class StandardResultsSetPagination(pagination.PageNumberPagination):
     """Standard pagination class for API responses.
 
     This pagination class provides consistent pagination across all API endpoints
