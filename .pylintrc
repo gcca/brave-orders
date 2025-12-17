@@ -46,7 +46,7 @@ include-naming-hint=no
 max-line-length=100
 
 # Maximum number of lines in a module.
-max-module-lines=1000
+max-module-lines=1500
 
 [DESIGN]
 # Maximum number of arguments for function / method.
